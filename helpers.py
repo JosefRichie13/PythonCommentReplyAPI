@@ -11,7 +11,7 @@ def generateID():
 # Sanitizes the string to avoid XSS vulnerabilities
 # Also removes any double spaces in between the strings
 def sanitizeString(inputString):
-    santizedString = html.escape(inputString)
+    santizedString = html.escape(inputString, quote=False)
     santizedString = re.sub(' +', ' ', santizedString)
     return santizedString
 
