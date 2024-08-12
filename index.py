@@ -138,3 +138,46 @@ def getReplyByID(response: Response, replyID: str):
 
 
 
+# Body for updating a comment or a reply, text is mandatory
+class updateACommentOrReply(BaseModel):
+    comment: str
+
+# Updates a comment
+@app.put("/updateComment")
+def updateCommentByID(commentID: str, updateCommentOrReplyBody: updateACommentOrReply, response: Response):
+    putConnection = sqlite3.connect("COMMENTREPLY.db")
+    cur = putConnection.cursor()
+
+    queryToCheckComment = "SELECT * FROM COMMENTREPLY WHERE TEXTID = ? AND TEXTTYPE = 'COMMENT'"
+    valuesToCheckComment = [commentID]
+    commentCheck = cur.execute(queryToCheckComment, valuesToCheckComment).fetchone()
+    if commentCheck is None:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"status": "No Comment with the ID " + commentID + " exists. Please recheck"}
+
+    queryToUpdateComment = "UPDATE COMMENTREPLY SET TEXTCONTENT = ? WHERE TEXTID = ?"
+    valuesToUpdateComment = (updateCommentOrReplyBody.comment, commentID)
+    cur.execute(queryToUpdateComment, valuesToUpdateComment)
+    putConnection.commit()
+    return {"status": "Comment updated"}
+
+
+# Updates a reply
+@app.put("/updateReply")
+def updateCommentByID(replyID: str, updateCommentOrReplyBody: updateACommentOrReply, response: Response):
+    putConnection = sqlite3.connect("COMMENTREPLY.db")
+    cur = putConnection.cursor()
+
+    queryToCheckReply = "SELECT * FROM COMMENTREPLY WHERE TEXTID = ? AND TEXTTYPE = 'REPLY'"
+    valuesToCheckReply = [replyID]
+    replyCheck = cur.execute(queryToCheckReply, valuesToCheckReply).fetchone()
+    if replyCheck is None:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"status": "No Reply with the ID " + replyID + " exists. Please recheck"}
+
+    queryToUpdateReply = "UPDATE COMMENTREPLY SET TEXTCONTENT = ? WHERE TEXTID = ?"
+    valuesToUpdateReply = (updateCommentOrReplyBody.comment, replyID)
+    cur.execute(queryToUpdateReply, valuesToUpdateReply)
+    putConnection.commit()
+    return {"status": "Reply updated"}
+
