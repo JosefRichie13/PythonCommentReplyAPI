@@ -181,3 +181,44 @@ def updateCommentByID(replyID: str, updateCommentOrReplyBody: updateACommentOrRe
     putConnection.commit()
     return {"status": "Reply updated"}
 
+
+
+# Deletes a comment by its ID. When a comment is deleted all its associated replies are also deleted.
+@app.delete("/deleteComment")
+def deleteCommentByID(commentID: str, response: Response):
+    delConnection = sqlite3.connect("COMMENTREPLY.db")
+    cur = delConnection.cursor()
+
+    queryToCheckComment = "SELECT * FROM COMMENTREPLY WHERE TEXTID = ? AND TEXTTYPE = 'COMMENT'"
+    valuesToCheckComment = [commentID]
+    commentCheck = cur.execute(queryToCheckComment, valuesToCheckComment).fetchone()
+    if commentCheck is None:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"status": "No Comment with the ID " + commentID + " exists. Please recheck"}
+
+    queryToDeleteComment = "DELETE FROM COMMENTREPLY WHERE TEXTID = ? OR COMMENTID = ?"
+    valuesToDeleteComment = [commentID, commentID]
+    cur.execute(queryToDeleteComment, valuesToDeleteComment)
+    delConnection.commit()
+    return {"status": "Comment with ID " + commentID + " and all its replies are deleted"}
+
+
+
+# Deleted a reply by its ID.
+@app.delete("/deleteReply")
+def deleteCommentByID(replyID: str, response: Response):
+    delConnection = sqlite3.connect("COMMENTREPLY.db")
+    cur = delConnection.cursor()
+
+    queryToCheckReply = "SELECT * FROM COMMENTREPLY WHERE TEXTID = ? AND TEXTTYPE = 'REPLY'"
+    valuesToCheckReply = [replyID]
+    commentCheck = cur.execute(queryToCheckReply, valuesToCheckReply).fetchone()
+    if commentCheck is None:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return {"status": "No Reply with the ID " + replyID + " exists. Please recheck"}
+
+    queryToDeleteReply = "DELETE FROM COMMENTREPLY WHERE TEXTID = ?"
+    valuesToDeleteReply = [replyID]
+    cur.execute(queryToDeleteReply, valuesToDeleteReply)
+    delConnection.commit()
+    return {"status": "Reply with ID " + replyID + " is deleted"}
