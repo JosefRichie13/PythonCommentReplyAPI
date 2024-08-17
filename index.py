@@ -5,6 +5,10 @@ from helpers import *
 
 app = FastAPI()
 
+@app.get("/")
+def landingPage():
+    return ("Hello, welcome to Comment and Reply API in Python.")
+
 
 # Body for adding a comment, comment text is mandatory
 class addAComment(BaseModel):
