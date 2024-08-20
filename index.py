@@ -144,7 +144,7 @@ def getReplyByID(response: Response, replyID: str):
 
 # Body for updating a comment or a reply, text is mandatory
 class updateACommentOrReply(BaseModel):
-    comment: str
+    commentOrReply: str
 
 # Updates a comment
 @app.put("/updateComment")
@@ -160,7 +160,7 @@ def updateCommentByID(commentID: str, updateCommentOrReplyBody: updateACommentOr
         return {"status": "No Comment with the ID " + commentID + " exists. Please recheck"}
 
     queryToUpdateComment = "UPDATE COMMENTREPLY SET TEXTCONTENT = ? WHERE TEXTID = ?"
-    valuesToUpdateComment = (updateCommentOrReplyBody.comment, commentID)
+    valuesToUpdateComment = (updateCommentOrReplyBody.commentOrReply, commentID)
     cur.execute(queryToUpdateComment, valuesToUpdateComment)
     putConnection.commit()
     return {"status": "Comment updated"}
@@ -168,7 +168,7 @@ def updateCommentByID(commentID: str, updateCommentOrReplyBody: updateACommentOr
 
 # Updates a reply
 @app.put("/updateReply")
-def updateCommentByID(replyID: str, updateCommentOrReplyBody: updateACommentOrReply, response: Response):
+def updateReplyByID(replyID: str, updateCommentOrReplyBody: updateACommentOrReply, response: Response):
     putConnection = sqlite3.connect("COMMENTREPLY.db")
     cur = putConnection.cursor()
 
@@ -180,7 +180,7 @@ def updateCommentByID(replyID: str, updateCommentOrReplyBody: updateACommentOrRe
         return {"status": "No Reply with the ID " + replyID + " exists. Please recheck"}
 
     queryToUpdateReply = "UPDATE COMMENTREPLY SET TEXTCONTENT = ? WHERE TEXTID = ?"
-    valuesToUpdateReply = (updateCommentOrReplyBody.comment, replyID)
+    valuesToUpdateReply = (updateCommentOrReplyBody.commentOrReply, replyID)
     cur.execute(queryToUpdateReply, valuesToUpdateReply)
     putConnection.commit()
     return {"status": "Reply updated"}
@@ -210,7 +210,7 @@ def deleteCommentByID(commentID: str, response: Response):
 
 # Deleted a reply by its ID.
 @app.delete("/deleteReply")
-def deleteCommentByID(replyID: str, response: Response):
+def deleteReplyByID(replyID: str, response: Response):
     delConnection = sqlite3.connect("COMMENTREPLY.db")
     cur = delConnection.cursor()
 
