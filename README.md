@@ -98,7 +98,7 @@ The below REST API endpoints are exposed
   > This endpoint allows you to delete a reply. It requires a query param to be sent.<br><br>
   > The Query Parameter is
   > ```
-  > ?replyID=<REPLU_ID>
+  > ?replyID=<REPLY_ID>
   > ```
 
 To run it in Dev mode, use the FastAPI run command
